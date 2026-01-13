@@ -1,0 +1,73 @@
+Install the newest version of Python and delete the old version(s).
+
+Explanation:
+
+make a few folders in c:\temp
+-Source
+-Output
+
+Put the .exe file of the correct version wich you downloaded from https://www.python.org/downloads/ in the Source folder.
+Also make two powershell scripts within the source folder
+
+The folder should look like this:
+python-x.x.x-amd64.exe
+Install-Python.ps1
+Uninstall-OldPython.ps1
+
+______________________________________________________________________________________________________________________________________________________________________________________
+Be sure the Install-Python.ps1 looks like this with the code (do not forget to change the version at the "Start-Process ".\python-x.x.x-amd64.exe" -ArgumentList" section of the code.
+
+Copy the tekst code below and save it as Install-Python.ps1:
+
+# Run uninstall script first
+powershell.exe -ExecutionPolicy Bypass -File ".\Uninstall-OldPython.ps1"
+
+# Install new Python silently
+Start-Process ".\python-3.14.2-amd64.exe" -ArgumentList "/quiet InstallAllUsers=1 PrependPath=1 Include_launcher=1" -Wait
+
+__________________________________________________________________
+Be sure the Uninstall-OldPython.ps1 looks like this with the code. Do not forget to change the version at the '$excludeVersion = "x.x.x"' part of the code.
+
+Copy the tekst code below and save it as Uninstall-OldPython.ps1:
+
+
+# Detect and uninstall old Python versions except the one being installed
+$excludeVersion = "3.14.2"  # Replace with the new version
+$oldVersions = Get-WmiObject -Class Win32_Product | Where-Object {
+    $_.Name -like "Python*" -and $_.Name -notlike "*$excludeVersion*"
+}
+
+foreach ($version in $oldVersions) {
+    Write-Host "Uninstalling $($version.Name)"
+    $version.Uninstall()
+}
+_________________________________________________________________________________________________________________________________________
+
+
+Now run the IntuneWin32App.exe and select as Source folder. For example C:\Temp\Python\Source
+Select as install file the Install-Python.ps1
+Select as Output folder the correct folder where the win32.intunewinapp needs to be placed. For example C:\Temp\Python\Output
+
+After the Win32 intune package has been made, go to intune
+
+Fill in the correct description, version number, information and privacy url, Developer, Category
+
+
+The install and uninstall commands should look like this:
+Install:
+powershell.exe -ExecutionPolicy Bypass -File Install-Python.ps1
+
+Uninstall:
+powershell.exe -ExecutionPolicy Bypass -File Uninstall-OldPython.ps1
+
+
+Detection rules are the following:
+File
+Path: C:\Program Files\PythonXXX (depending on your version. For example 314)
+File or Folder: python.exe
+Detection method: File or Folder exists.
+
+Finish the installation with making a security group and assigning it to the package.
+
+Thank me later! ;)
+
