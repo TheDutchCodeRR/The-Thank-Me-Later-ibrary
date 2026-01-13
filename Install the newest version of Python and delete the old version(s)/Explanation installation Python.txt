@@ -9,7 +9,7 @@ make a few folders in c:\temp
 Put the .exe file of the correct version wich you downloaded from https://www.python.org/downloads/ in the Source folder.
 Also make two powershell scripts within the source folder
 
-The folder should look like this:
+The Source folder should look like this:
 python-x.x.x-amd64.exe
 Install-Python.ps1
 Uninstall-OldPython.ps1
@@ -70,4 +70,5 @@ Detection method: File or Folder exists.
 Finish the installation with making a security group and assigning it to the package.
 
 Thank me later! ;)
+
 
